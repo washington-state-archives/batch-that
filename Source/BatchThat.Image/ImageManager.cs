@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BatchThat.Image.Enums;
 using BatchThat.Image.EventArguments;
 using BatchThat.Image.Filters;
 using ImageMagick;
@@ -65,7 +66,7 @@ namespace BatchThat.Image
                         {
                             Current = processed,
                             Total = files.Count,
-                            Message = $"Processed '{file}' ({savePath})"
+                            Message = new ChangedEventMessage($"Processed '{file}' ({savePath})", EnumMessageType.Informational)
                         });
                     }
                 }
@@ -79,7 +80,7 @@ namespace BatchThat.Image
                     {
                         Current = processed,
                         Total = files.Count,
-                        Message = $"Unable to process '{file}' ({ex.Message})"
+                        Message = new ChangedEventMessage($"Unable to process '{file}' ({ex.Message})", EnumMessageType.Error)
                     });
                 }
                 finally

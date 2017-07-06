@@ -1,10 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using BatchThat.Image;
+using BatchThat.Image.Enums;
 using BatchThat.Image.EventArguments;
 using Application = System.Windows.Application;
 
@@ -15,7 +18,10 @@ namespace BatchThat.ViewModels
         private string _sourceFolder;
         private string _destinationFolder;
         private bool _includeSubfolders;
-        public BindingList<string> Log { get; set; }
+        private EnumMessageType _currentFilter;
+
+        private List<ChangedEventMessage> ChangedEvents { get; set; }
+        public BindingList<ChangedEventMessage> Log { get; set; }
         protected ImageManager ImageManager { get; }
         public string SourceFolder
         {
@@ -39,15 +45,51 @@ namespace BatchThat.ViewModels
         public ICommand BrowseDestinationFolderCommand { get; set; }
         public ICommand ApplyFiltersCommand { get; set; }
         public ICommand SaveImageCommand { get; set; }
+        public ICommand FilterAllMessages { get; set; }
 
         public BulkImageProcessorViewModel()
         {
-            Log = new BindingList<string>();
+            _currentFilter = EnumMessageType.All;
+            ChangedEvents = new List<ChangedEventMessage>();
+            Log = new BindingList<ChangedEventMessage>();
             Enabled = true;
             ImageManager = new ImageManager();
             BrowseSourceFolderCommand = new RelayCommand(BrowseSourceFolder);
             BrowseDestinationFolderCommand = new RelayCommand(BrowseDestinationFolder);
             ApplyFiltersCommand = new RelayCommand(ApplyFilters);
+            FilterAllMessages = new RelayCommand(FilterMessages);
+        }
+
+        private void FilterMessages(object parameter)
+        {
+            var param = parameter.ToString();
+            _currentFilter = (EnumMessageType) Enum.Parse(typeof(EnumMessageType), param);
+            switch (_currentFilter)
+            {
+                case EnumMessageType.All:
+                    Log.Clear();
+                    foreach (var message in ChangedEvents)
+                    {
+                        Log.Add(message);
+                    }
+                    break;
+                case EnumMessageType.Error:
+                    Log.Clear();
+                    foreach (var message in ChangedEvents.Where(x => x.MessageType == EnumMessageType.Error))
+                    {
+                        Log.Add(message);
+                    }
+                    break;
+                case EnumMessageType.Informational:
+                    Log.Clear();
+                    foreach (var message in ChangedEvents.Where(x => x.MessageType == EnumMessageType.Informational))
+                    {
+                        Log.Add(message);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void BrowseSourceFolder(object obj)
@@ -104,6 +146,8 @@ namespace BatchThat.ViewModels
 
         private async void ApplyFilters(object obj)
         {
+            ChangedEvents.Clear();
+            Log.Clear();
             Enabled = false;
             ImageManager.ProgressChanged += ProgressChanged;
             await Task.Run(() =>
@@ -119,7 +163,9 @@ namespace BatchThat.ViewModels
             Application.Current.Dispatcher.Invoke(() => {
                 Current = e.Current;
                 Total = e.Total;
-                Log.Add(e.Message);
+                ChangedEvents.Add(e.Message);
+                if (_currentFilter == EnumMessageType.All || _currentFilter == e.Message.MessageType)
+                    Log.Add(e.Message);
             });
         }
     }

@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\EnumAxis.cs" />
+    <Compile Include="Enums\EnumMessageType.cs" />
     <Compile Include="Enums\EnumScanDirection.cs" />
+    <Compile Include="EventArguments\ChangedEventMessage.cs" />
     <Compile Include="EventArguments\ProgressChangedEventArgument.cs" />
     <Compile Include="Filters\AutoCrop.cs" />
     <Compile Include="Filters\DeSkew.cs" />
