@@ -29,4 +29,4 @@ Applying auto crop, deskew, enhance, sharpen, and trim with BatchThat we now hav
 ![Initial Document](https://raw.githubusercontent.com/washington-state-archives/batch-that/master/batch-that-finished.png)
 
 ## Sounds cool! Where can I download BatchThat?
-The compliled binaries for BatchThat are currently available from here: https://github.com/washington-state-archives/batch-that/raw/master/Releases/BatchThat.zip
+The source code and binary files can be downloaded here: https://github.com/washington-state-archives/batch-that/releases/tag/v1.0.0.0
