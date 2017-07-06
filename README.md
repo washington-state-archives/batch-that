@@ -16,4 +16,8 @@ BatchThat allows users to apply a set of manipulations to images, these manipula
 ## Do you have an example of how BatchThat works?
 Below are two images, the first image is a scanned document we received from one of our volunteers that scanned a large amount of documents at the Washington State Archives. As you can see, this doucment is a bit skewed, has a large black background, and is a bit dull.
 
+![Initial Document](https://raw.githubusercontent.com/washington-state-archives/batch-that/master/batch-that-inital.png)
+
 Applying auto crop, deskew, enhance, sharpen, and trim with BatchThat we now have an image that is displayed below. We believe this is a large improvement over the initial image and it took little work for our software to create this for us.
+
+![Initial Document](https://raw.githubusercontent.com/washington-state-archives/batch-that/master/batch-that-finished.png)
