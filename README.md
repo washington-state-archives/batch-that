@@ -27,3 +27,6 @@ Below are two images, the first image is a scanned document we received from one
 Applying auto crop, deskew, enhance, sharpen, and trim with BatchThat we now have an image that is displayed below. We believe this is a large improvement over the initial image and it took little work for our software to create this for us.
 
 ![Initial Document](https://raw.githubusercontent.com/washington-state-archives/batch-that/master/batch-that-finished.png)
+
+## Sounds cool! Where can I download BatchThat?
+The compliled binaries for BatchThat are currently available from here: https://github.com/washington-state-archives/batch-that/blob/master/Releases/BatchThat.zip
