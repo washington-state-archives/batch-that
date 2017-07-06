@@ -5,7 +5,7 @@ An automated image processing application
 BatchThat is the Washington State Archives' first open source project. We wanted to release software out to the public that would help others prepare scanned documents for digital preservation. This application is a bit rough around the edges but will evolve over time, it is our hope that the digital archiving community will help make this application better as well.
 
 ## Who can use BatchThat?
-Anyone can use BatchThat as it adheres to the MIT license ((https://raw.githubusercontent.com/washington-state-archives/batch-that/master/LICENSE))
+BatchThat is released under the MIT license. (https://raw.githubusercontent.com/washington-state-archives/batch-that/master/LICENSE)
 
 ## What does BatchThat allow users to do?
 BatchThat allows users to apply a set of manipulations to images, these manipulations or "filters" as we call them include:
