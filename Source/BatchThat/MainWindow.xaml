@@ -1,0 +1,133 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatchThat"
+        xmlns:ViewModels="clr-namespace:BatchThat.ViewModels" x:Name="window" x:Class="BatchThat.MainWindow"
+        mc:Ignorable="d"
+        Title="BatchThat" Height="800" Width="800">
+    <Window.DataContext>
+        <ViewModels:BatchThatViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.Row="0" Grid.Column="0" Margin="10" RenderTransformOrigin="0.5,0.5" HorizontalContentAlignment="Center">
+            <TabItem Header="Single">
+                <Grid Background="#FFE5E5E5" IsEnabled="{Binding SingleImageProcessorViewModel.Enabled}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Image:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Width="234" Text="{Binding SingleImageProcessorViewModel.SourceFile}"/>
+                                <Button Width="20" Content="..." Command="{Binding SingleImageProcessorViewModel.BrowseImageFileCommand}" CommandParameter="None"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <GroupBox Header="Filters">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Auto Crop" IsChecked="{Binding SingleImageProcessorViewModel.AutoCrop}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Deskew" IsChecked="{Binding SingleImageProcessorViewModel.Deskew}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Enhance" IsChecked="{Binding SingleImageProcessorViewModel.Enhance}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Greyscale" IsChecked="{Binding SingleImageProcessorViewModel.Greyscale}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Sharpen" IsChecked="{Binding SingleImageProcessorViewModel.Sharpen}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Trim" IsChecked="{Binding SingleImageProcessorViewModel.Trim}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <ProgressBar Height="20" Margin="0
+                                         " Maximum="{Binding SingleImageProcessorViewModel.Total}" Value="{Binding SingleImageProcessorViewModel.Current}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Save Image" Command="{Binding SingleImageProcessorViewModel.SaveImageCommand}" CommandParameter="None"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Image Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Source="{Binding SingleImageProcessorViewModel.PreviewFile}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Bulk">
+                <Grid Background="#FFE5E5E5"  IsEnabled="{Binding BulkImageProcessorViewModel.Enabled}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Source Folder:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Width="194" Text="{Binding BulkImageProcessorViewModel.SourceFolder}"/>
+                                <Button Width="20" Content="..." Command="{Binding BulkImageProcessorViewModel.BrowseSourceFolderCommand}" CommandParameter="None"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Destination Folder:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Width="169" Text="{Binding BulkImageProcessorViewModel.DestinationFolder}"/>
+                                <Button Width="20" Content="..." Command="{Binding BulkImageProcessorViewModel.BrowseDestinationFolderCommand}" CommandParameter="None"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Include Subfolders:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox VerticalAlignment="Center" Width="169" HorizontalAlignment="Left" IsChecked="{Binding BulkImageProcessorViewModel.IncludeSubfolders}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <GroupBox Header="Filters">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Auto Crop" IsChecked="{Binding BulkImageProcessorViewModel.AutoCrop}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Deskew" IsChecked="{Binding BulkImageProcessorViewModel.Deskew}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Enhance" IsChecked="{Binding BulkImageProcessorViewModel.Enhance}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Greyscale" IsChecked="{Binding BulkImageProcessorViewModel.Greyscale}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Sharpen" IsChecked="{Binding BulkImageProcessorViewModel.Sharpen}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Trim" IsChecked="{Binding BulkImageProcessorViewModel.Trim}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <ProgressBar Height="20" Margin="0" Maximum="{Binding BulkImageProcessorViewModel.Total}" Value="{Binding BulkImageProcessorViewModel.Current}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Margin="0,0,0,0" Content="Apply Filter(s)" Command="{Binding BulkImageProcessorViewModel.ApplyFiltersCommand}" CommandParameter="None" />
+                        </StackPanel>
+                    </StackPanel>
+                    <ListBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding BulkImageProcessorViewModel.Log}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
