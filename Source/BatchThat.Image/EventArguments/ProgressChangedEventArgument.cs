@@ -6,7 +6,7 @@ namespace BatchThat.Image.EventArguments
     {
         public int Current { get; set; }
         public int Total { get; set; }
-        public string Message { get; set; }
+        public ChangedEventMessage Message { get; set; }
         public Bitmap Image { get; set; }
     }
 }

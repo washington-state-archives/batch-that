@@ -68,12 +68,12 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Bulk">
-                <Grid Background="#FFE5E5E5"  IsEnabled="{Binding BulkImageProcessorViewModel.Enabled}">
+                <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="300"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical" IsEnabled="{Binding BulkImageProcessorViewModel.Enabled}">
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Source Folder:"/>
                             <StackPanel Orientation="Horizontal">
@@ -125,7 +125,18 @@
                             <Button Margin="0,0,0,0" Content="Apply Filter(s)" Command="{Binding BulkImageProcessorViewModel.ApplyFiltersCommand}" CommandParameter="None" />
                         </StackPanel>
                     </StackPanel>
-                    <ListBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding BulkImageProcessorViewModel.Log}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40px"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" Margin="5">
+                            <Button Padding="5px" Command="{Binding BulkImageProcessorViewModel.FilterAllMessages}" CommandParameter="All">All Messages</Button>
+                            <Button Padding="5px" Command="{Binding BulkImageProcessorViewModel.FilterAllMessages}" CommandParameter="Informational">Informational Messages</Button>
+                            <Button Padding="5px" Command="{Binding BulkImageProcessorViewModel.FilterAllMessages}" CommandParameter="Error">Error Messages</Button>
+                        </StackPanel>
+                        <ListBox Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding BulkImageProcessorViewModel.Log}" DisplayMemberPath="Message" Height="Auto" Width="Auto"/>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
