@@ -14,7 +14,7 @@ BatchThat allows users to apply a set of manipulations to images, these manipula
 - Auto Trimming
 
 ## What file formats are supported?
-Currently BatchThat has been tested with single page and multipage TIFF files. BatchThat *should* work most image formats but it has not been tested by us. BatchThat always outputs its work as single page or multipage tiff and preserves the name of the original file. As the application evolves, these constraints may (will likely) change.
+Currently BatchThat has been tested with single page and multipage TIFF files. BatchThat *should* work with most image formats but it has not been tested by us. BatchThat always outputs its work as single page or multipage tiff and preserves the name of the original file. As the application evolves, these constraints may (will likely) change.
 
 ## Do you have an example of how BatchThat works?
 Below are two images, the first image is a scanned document we received from one of our volunteers that scanned a large amount of documents at the Washington State Archives. As you can see, this doucment is a bit skewed, has a large black background, and is a bit dull.
