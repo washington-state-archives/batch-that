@@ -69,6 +69,7 @@
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModels\BatchThatViewModel.cs" />
     <Compile Include="ViewModels\BulkImageProcessorViewModel.cs" />
+    <Compile Include="ViewModels\FilePropertyViewModel.cs" />
     <Compile Include="ViewModels\ImageProcessorViewModel.cs" />
     <Compile Include="ViewModels\SingleImageProcessorViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

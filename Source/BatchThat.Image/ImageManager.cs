@@ -178,5 +178,57 @@ namespace BatchThat.Image
             }
             frames.Clear();
         }
+
+        public void GetFilesProperties(List<string> files, string exportPath)
+        {
+            var processed = 0;
+
+            ProgressChanged(this, new ProgressChangedEventArgument
+            {
+                Current = processed,
+                Total = files.Count,
+                Message = new ChangedEventMessage($"\"File\",\"Frame Count\",\"Width\",\"Height\",\"Horizontal Resolution\",\"Vertical Resolution\"", EnumMessageType.Informational)
+            });
+
+            Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 }, file =>
+            {
+                var frames = new List<string>();
+                try
+                {
+                    using (var tiffImage = System.Drawing.Image.FromFile(file))
+                    {
+                        var pageCount = tiffImage.GetFrameCount(FrameDimension.Page);
+                        
+                        lock (Mutex)
+                        {
+                            processed++;
+                        }
+                        ProgressChanged(this, new ProgressChangedEventArgument
+                        {
+                            Current = processed,
+                            Total = files.Count,
+                            Message = new ChangedEventMessage($"\"{file}\",\"{pageCount}\",\"{tiffImage.Width}\",\"{tiffImage.Height}\",\"{tiffImage.HorizontalResolution}\",\"{tiffImage.VerticalResolution}\"", EnumMessageType.Informational)
+                        });
+                    }
+                }
+                catch (Exception)
+                {
+                    lock (Mutex)
+                    {
+                        processed++;
+                    }
+                    ProgressChanged(this, new ProgressChangedEventArgument
+                    {
+                        Current = processed,
+                        Total = files.Count,
+                        Message = new ChangedEventMessage($"\"{file}\",\"\",\"\",\"\",\"\",\"\"", EnumMessageType.Error)
+                    });
+                }
+                finally
+                {
+                    Clean(frames);
+                }
+            });
+        }
     }
 }

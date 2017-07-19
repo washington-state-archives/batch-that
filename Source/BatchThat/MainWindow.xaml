@@ -139,6 +139,35 @@
                     </Grid>
                 </Grid>
             </TabItem>
+            <TabItem Header="File Properties">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical" IsEnabled="{Binding FilePropertyViewModel.Enabled}">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Source Folder:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Width="194" Text="{Binding FilePropertyViewModel.SourceFolder}"/>
+                                <Button Width="20" Content="..." Command="{Binding FilePropertyViewModel.BrowseSourceFolderCommand}" CommandParameter="None"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Include Subfolders:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox VerticalAlignment="Center" Width="169" HorizontalAlignment="Left" IsChecked="{Binding FilePropertyViewModel.IncludeSubfolders}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel>
+                            <ProgressBar Height="20" Margin="0" Maximum="{Binding FilePropertyViewModel.Total}" Value="{Binding FilePropertyViewModel.Current}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Margin="0,0,0,0" Content="Export File Properties" Command="{Binding FilePropertyViewModel.ExportFilePropertiesCommand}" CommandParameter="None" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
