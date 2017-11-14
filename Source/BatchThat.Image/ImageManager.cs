@@ -57,7 +57,7 @@ namespace BatchThat.Image
                             if (!directory.Exists)
                                 directory.Create();
                         }
-                        Save(savePath, frames);
+                        Save(savePath, frames, tiffImage.PixelFormat);
                         lock (Mutex)
                         {
                             processed++;
@@ -126,19 +126,13 @@ namespace BatchThat.Image
                         image.Dispose();
                     }
                 }
-                Save(saveFile, frames);
+                Save(saveFile, frames, tiffImage.PixelFormat);
                 Clean(frames);
             }
         }
 
-        public void Save(string output, List<string> frames)
+        public void Save(string output, List<string> frames, PixelFormat pixelFormat)
         {
-            if (frames.Count == 1)
-            {
-                File.Copy(frames[0], output, true);
-                return;
-            }
-
             var codecInfo = ImageCodecInfo.GetImageEncoders().First(imageEncoder => imageEncoder.MimeType == "image/tiff");
             var parameters = new EncoderParameters
             {
@@ -153,7 +147,8 @@ namespace BatchThat.Image
                 Param = new[]
                 {
                     new EncoderParameter(Encoder.SaveFlag, (long) EncoderValue.FrameDimensionPage),
-                    new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionLZW)
+                    new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionLZW),
+                    new EncoderParameter(Encoder.ColorDepth, (long)pixelFormat)
                 }
             };
 
