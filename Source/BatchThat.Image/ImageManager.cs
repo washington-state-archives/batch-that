@@ -4,16 +4,35 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using BatchThat.Image.Enums;
 using BatchThat.Image.EventArguments;
 using BatchThat.Image.Filters;
 using ImageMagick;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace BatchThat.Image
 {
     public class ImageManager
     {
+        private readonly ImageFormat[] formatList =
+        {
+            ImageFormat.Gif,
+            ImageFormat.Jpeg,
+            ImageFormat.Png,
+            ImageFormat.Tiff
+        };
+        private enum TiffCompressionTypes
+        {
+            Unspecified = 0,
+            Uncompressed = 1,
+            CCIT1D = 2,
+            CCIT2D = 3,
+            CCITT6 = 4,
+            LZW = 5,
+            JPEG = 7
+        }
         public EventHandler<ProgressChangedEventArgument> ProgressChanged;
         private static readonly object Mutex = new object();
 
@@ -182,7 +201,7 @@ namespace BatchThat.Image
             {
                 Current = processed,
                 Total = files.Count,
-                Message = new ChangedEventMessage($"\"File\",\"Frame Count\",\"Width\",\"Height\",\"Horizontal Resolution\",\"Vertical Resolution\"", EnumMessageType.Informational)
+                Message = new ChangedEventMessage($"\"File\",\"Frame Count\",\"Width\",\"Height\",\"Horizontal Resolution\",\"Vertical Resolution\",\"File Size\",\"File Format\",\"Compression Type\",\"File Creation Date\",\"Color Space\",\"Camera Model or Capture Hardware\"", EnumMessageType.Informational)
             });
 
             Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 }, file =>
@@ -192,8 +211,18 @@ namespace BatchThat.Image
                 {
                     using (var tiffImage = System.Drawing.Image.FromFile(file))
                     {
+                        FileInfo fileInfo = new FileInfo(file);
                         var pageCount = tiffImage.GetFrameCount(FrameDimension.Page);
-                        
+                        var imageFormat = formatList.FirstOrDefault(f => f.Equals(tiffImage.RawFormat)).ToString();
+                        string equipmentMake = tiffImage.PropertyItems.Any(p => p.Id == 271) ? System.Text.Encoding.Default.GetString(tiffImage.GetPropertyItem(271).Value).TrimEnd(new char['0']) : "";
+                        string equipmentModel = tiffImage.PropertyItems.Any(p => p.Id == 272) ? System.Text.Encoding.Default.GetString(tiffImage.GetPropertyItem(272).Value).TrimEnd(new char['0']) : "";
+                        TiffCompressionTypes compressionType = tiffImage.PropertyItems.Any(p => p.Id == 259) ? (TiffCompressionTypes)tiffImage.GetPropertyItem(259).Value[0] : TiffCompressionTypes.Unspecified;
+                        string colorSpace = tiffImage.PropertyItems.Any(p => p.Id == 40961)
+                            ? tiffImage.GetPropertyItem(40961).Value[0] == 1
+                                ? "sRGB"
+                                : "Uncalibrated"
+                            : "";
+                        string fileSizeString = GetHumanReadableFileSize(fileInfo.Length);
                         lock (Mutex)
                         {
                             processed++;
@@ -202,7 +231,7 @@ namespace BatchThat.Image
                         {
                             Current = processed,
                             Total = files.Count,
-                            Message = new ChangedEventMessage($"\"{file}\",\"{pageCount}\",\"{tiffImage.Width}\",\"{tiffImage.Height}\",\"{tiffImage.HorizontalResolution}\",\"{tiffImage.VerticalResolution}\"", EnumMessageType.Informational)
+                            Message = new ChangedEventMessage($"\"{file}\",\"{pageCount}\",\"{tiffImage.Width}\",\"{tiffImage.Height}\",\"{tiffImage.HorizontalResolution}\",\"{tiffImage.VerticalResolution}\",\"{fileSizeString}\",\"{imageFormat}\",\"{compressionType}\",\"{fileInfo.CreationTime}\",\"{colorSpace}\",\"{equipmentMake}{(equipmentMake.Length > 0 ? " ": "")}{equipmentModel}\"", EnumMessageType.Informational)
                         });
                     }
                 }
@@ -224,6 +253,17 @@ namespace BatchThat.Image
                     Clean(frames);
                 }
             });
+        }
+
+        public string GetHumanReadableFileSize(long length)
+        {
+            decimal scaledLength = length;
+            long remainder = 0;
+            string[] sizeSpecifiers = new[] {"bytes","KB","MB","GB","TB"};
+            double order = Math.Floor(Math.Log(length, 1024));
+            double number = (length / Math.Pow(1024, order));
+            StringBuilder builder = new StringBuilder().Append(Math.Round(number, 1).ToString()).Append(" ").Append(sizeSpecifiers[(int)order]);
+            return builder.ToString();
         }
     }
 }

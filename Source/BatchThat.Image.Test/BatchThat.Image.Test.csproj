@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="EventArguments\ChangedEventMessageTest.cs" />
     <Compile Include="Filters\ResizeTest.cs" />
+    <Compile Include="ImageManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
