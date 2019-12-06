@@ -217,11 +217,7 @@ namespace BatchThat.Image
                         string equipmentMake = tiffImage.PropertyItems.Any(p => p.Id == 271) ? System.Text.Encoding.Default.GetString(tiffImage.GetPropertyItem(271).Value).TrimEnd(new char['0']) : "";
                         string equipmentModel = tiffImage.PropertyItems.Any(p => p.Id == 272) ? System.Text.Encoding.Default.GetString(tiffImage.GetPropertyItem(272).Value).TrimEnd(new char['0']) : "";
                         TiffCompressionTypes compressionType = tiffImage.PropertyItems.Any(p => p.Id == 259) ? (TiffCompressionTypes)tiffImage.GetPropertyItem(259).Value[0] : TiffCompressionTypes.Unspecified;
-                        string colorSpace = tiffImage.PropertyItems.Any(p => p.Id == 40961)
-                            ? tiffImage.GetPropertyItem(40961).Value[0] == 1
-                                ? "sRGB"
-                                : "Uncalibrated"
-                            : "";
+                        string colorSpace = tiffImage.PropertyItems.Any(p => p.Id == 40961) ? GetColorspaceName(tiffImage.GetPropertyItem(40961).Value[0]) : "";
                         string fileSizeString = GetHumanReadableFileSize(fileInfo.Length);
                         lock (Mutex)
                         {
@@ -264,6 +260,23 @@ namespace BatchThat.Image
             double number = (length / Math.Pow(1024, order));
             StringBuilder builder = new StringBuilder().Append(Math.Round(number, 1).ToString()).Append(" ").Append(sizeSpecifiers[(int)order]);
             return builder.ToString();
+        }
+        private string GetColorspaceName(int identifier)
+        {
+            string colorspaceName = "Uncalibrated";
+            switch (identifier)
+            {
+                case 1:
+                    colorspaceName = "sRGB";
+                    break;
+                case 2:
+                    colorspaceName = "Adobe RGB";
+                    break;
+                default:
+                    colorspaceName = "Uncalibrated";
+                    break;
+            }
+            return colorspaceName;
         }
     }
 }
