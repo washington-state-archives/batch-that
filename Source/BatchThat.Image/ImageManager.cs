@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using BatchThat.Image.Enums;
 using BatchThat.Image.EventArguments;
 using BatchThat.Image.Filters;
@@ -218,6 +219,11 @@ namespace BatchThat.Image
                         string equipmentModel = tiffImage.PropertyItems.Any(p => p.Id == 272) ? System.Text.Encoding.Default.GetString(tiffImage.GetPropertyItem(272).Value).TrimEnd(new char['0']) : "";
                         TiffCompressionTypes compressionType = tiffImage.PropertyItems.Any(p => p.Id == 259) ? (TiffCompressionTypes)tiffImage.GetPropertyItem(259).Value[0] : TiffCompressionTypes.Unspecified;
                         string colorSpace = tiffImage.PropertyItems.Any(p => p.Id == 40961) ? GetColorspaceName(tiffImage.GetPropertyItem(40961).Value[0]) : "";
+                        if (tiffImage.PropertyIdList.Any(p => p == 34675))
+                        {
+                            byte[] valueArray = tiffImage.GetPropertyItem(34675).Value;
+                            AssignDescriptionFromICCProfile(valueArray, ref colorSpace);
+                        }
                         string fileSizeString = GetHumanReadableFileSize(fileInfo.Length);
                         lock (Mutex)
                         {
@@ -254,7 +260,6 @@ namespace BatchThat.Image
         public string GetHumanReadableFileSize(long length)
         {
             decimal scaledLength = length;
-            long remainder = 0;
             string[] sizeSpecifiers = new[] {"bytes","KB","MB","GB","TB"};
             double order = Math.Floor(Math.Log(length, 1024));
             double number = (length / Math.Pow(1024, order));
@@ -277,6 +282,40 @@ namespace BatchThat.Image
                     break;
             }
             return colorspaceName;
+        }
+
+        public void AssignDescriptionFromICCProfile(byte[] profileByteArray, ref string profileDescription)
+        {
+            byte[] descriptionMarkerBytes = Encoding.ASCII.GetBytes("desc");
+            int startIndex = 0;
+            int tagIndex = -1;
+            int charIndex = Array.IndexOf(profileByteArray, descriptionMarkerBytes[0], startIndex);
+            while (charIndex != -1)
+            {
+                bool arrayMatch = true;
+                for (int i = 0; i < descriptionMarkerBytes.Length; i++)
+                {
+                    if (profileByteArray[charIndex + i] != descriptionMarkerBytes[i])
+                    {
+                        arrayMatch = false;
+                    }
+                }
+                if (arrayMatch == true && charIndex < profileByteArray.Length - (descriptionMarkerBytes.Length + 4))
+                {
+                    Array.Reverse(profileByteArray, charIndex + descriptionMarkerBytes.Length, 4);
+                    tagIndex = BitConverter.ToInt32(profileByteArray, charIndex + descriptionMarkerBytes.Length);
+                    break;
+                }
+
+            }
+            if (tagIndex != -1)
+            {
+                Array.Reverse(profileByteArray, tagIndex + 8, 4);
+                int descriptionLength = BitConverter.ToInt32(profileByteArray, tagIndex + 8);
+                string description =
+                    System.Text.Encoding.ASCII.GetString(profileByteArray, tagIndex + 12, descriptionLength - 1);
+                profileDescription = description;
+            }
         }
     }
 }
