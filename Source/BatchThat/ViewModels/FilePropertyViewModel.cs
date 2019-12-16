@@ -61,7 +61,7 @@ namespace BatchThat.ViewModels
 
         private async void ExportFileProperties(object obj)
         {
-            ImageManager.ProgressChanged += ProgressChanged;
+            ImageManager.ProgressChanged = ProgressChanged;
 
             var saveFileDialog = new SaveFileDialog { Filter = "CSV Files (*.csv)|*.csv" };
             var showDialog = saveFileDialog.ShowDialog();
